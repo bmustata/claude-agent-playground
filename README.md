@@ -2,14 +2,29 @@
 
 This is a playground for agents built around Claude and the Claude Agent SDK. It's an easy way to learn and experiment, nothing more: an experimentation project where you can poke at agents, try ideas and see what happens. Expect rough edges, and expect things to change.
 
+It is also a sandbox for hands-on practice while preparing for the Claude certifications ([CCAO-F](https://anthropic-partners.skilljar.com/claude-certified-associate-foundations-certification), [CCAR-F](https://anthropic-partners.skilljar.com/claude-certified-architect-foundations-certification), [CCAR-P](https://anthropic-partners.skilljar.com/claude-certified-architect-professional-certification), [CCDV-F](https://anthropic-partners.skilljar.com/claude-certified-developer-foundations-certification)).
+
 ![Agent Playground UI](docs/info/agent-explorer-ui.jpg)
 
 It has two parts: a Node.js backend that runs a Claude agent behind a REST API (built on the [Claude Agent SDK](https://docs.claude.com/en/api/agent-sdk/overview)), and a React UI to talk to it. Use it to try prompts, keep sessions, save prompts to a library and see how the agent answers.
 
-| Project | What it is | Port |
-|---|---|---|
+| Project                                    | What it is                                                        | Port |
+| ------------------------------------------ | ----------------------------------------------------------------- | ---- |
 | [agent-claude-nodejs](agent-claude-nodejs) | Express API that runs a Claude agent through the Claude Agent SDK | 4005 |
-| [agent-explorer-ui](agent-explorer-ui) | React + Vite UI to send prompts and view answers | 4000 |
+| [agent-explorer-ui](agent-explorer-ui)     | React + Vite UI to send prompts and view answers                  | 4000 |
+
+### Agent types
+
+The agents live in [agent-claude-nodejs/src/agent](agent-claude-nodejs/src/agent). Each one builds on the one before it.
+
+| Agent | File | What it does |
+|---|---|---|
+| Mini agent | [mini-agent.ts](agent-claude-nodejs/src/agent/mini-agent.ts) | The simplest one. One standalone prompt, one answer, no context kept. |
+| Session agent | [mini-agent-session.ts](agent-claude-nodejs/src/agent/mini-agent-session.ts) | Same as the mini agent, but inside a session, so it remembers earlier questions. |
+| Structured agent | [mini-agent-structured.ts](agent-claude-nodejs/src/agent/mini-agent-structured.ts) | Replies with JSON that matches a zod schema (`answer` and `key_points`) instead of free text. |
+| Sub-agents | [mini-agent-subagents.ts](agent-claude-nodejs/src/agent/mini-agent-subagents.ts) | Can delegate to sub-agents through the Task tool. Includes a `data-analyst` that reads CSV files. |
+| Images agent | [mini-agent-ses-images.ts](agent-claude-nodejs/src/agent/mini-agent-ses-images.ts) | Session agent that also accepts uploaded images along with the prompt. |
+| Tools agent | [agent.ts](agent-claude-nodejs/src/agent/agent.ts) | Uses only our own tools (see [tools/](agent-claude-nodejs/src/agent/tools), e.g. `currentTime`) and reports the model, tools used and token usage. |
 
 ## Architecture
 
@@ -81,14 +96,14 @@ cp .env.example .env
 
 Edit `.env`:
 
-| Variable | Required | Description |
-|---|---|---|
-| `PORT` | no | Port to listen on. Default `4005`. |
-| `ANTHROPIC_API_KEY` | no | API key. If empty, the Claude Code login (subscription) is used instead. |
-| `ANTHROPIC_BASE_URL` | no | Override the API base URL (e.g. a proxy or gateway). |
-| `ALLOWED_MODELS` | no | Comma-separated allow-list for the `model` request param. Empty allows any model. |
-| `SESSIONS_DIR` | no | Where sessions are saved as JSON. Default `data/session`, relative to where the server is started. |
-| `LOG_LEVEL` | no | Log level. Default `info`. |
+| Variable             | Required | Description                                                                                        |
+| -------------------- | -------- | -------------------------------------------------------------------------------------------------- |
+| `PORT`               | no       | Port to listen on. Default `4005`.                                                                 |
+| `ANTHROPIC_API_KEY`  | no       | API key. If empty, the Claude Code login (subscription) is used instead.                           |
+| `ANTHROPIC_BASE_URL` | no       | Override the API base URL (e.g. a proxy or gateway).                                               |
+| `ALLOWED_MODELS`     | no       | Comma-separated allow-list for the `model` request param. Empty allows any model.                  |
+| `SESSIONS_DIR`       | no       | Where sessions are saved as JSON. Default `data/session`, relative to where the server is started. |
+| `LOG_LEVEL`          | no       | Log level. Default `info`.                                                                         |
 
 Start it:
 
@@ -134,18 +149,22 @@ curl http://localhost:4005/health
 ```
 
 ```json
-{ "status": "Ok", "service": "agent-claude-nodejs", "timestamp": "2026-10-20T06:44:31.000Z" }
+{
+  "status": "Ok",
+  "service": "agent-claude-nodejs",
+  "timestamp": "2026-10-20T06:44:31.000Z"
+}
 ```
 
 ### `POST /query`
 
 Runs the agent against a prompt.
 
-| Field | In | Type | Required | Description |
-|---|---|---|---|---|
-| `prompt` | body (JSON) | string | yes | The question or instruction for the agent. Must be non-empty. |
-| `model` | body (JSON) | string | no | Overrides the default model. Must be in `ALLOWED_MODELS` if that is set. |
-| `sessionId` | body (JSON) | string | no | Runs the prompt inside this session (see below). Unknown ids return `404`. |
+| Field       | In          | Type   | Required | Description                                                                |
+| ----------- | ----------- | ------ | -------- | -------------------------------------------------------------------------- |
+| `prompt`    | body (JSON) | string | yes      | The question or instruction for the agent. Must be non-empty.              |
+| `model`     | body (JSON) | string | no       | Overrides the default model. Must be in `ALLOWED_MODELS` if that is set.   |
+| `sessionId` | body (JSON) | string | no       | Runs the prompt inside this session (see below). Unknown ids return `404`. |
 
 ```bash
 curl -X POST http://localhost:4005/query \
@@ -157,19 +176,19 @@ curl -X POST http://localhost:4005/query \
 { "answer": "Paris is the capital of France.", "rounds": 1, "duration": 1840 }
 ```
 
-| Field | Description |
-|---|---|
-| `answer` | The agent's final text reply. |
-| `rounds` | Number of agent turns taken. |
-| `duration` | Run time in milliseconds. |
+| Field      | Description                   |
+| ---------- | ----------------------------- |
+| `answer`   | The agent's final text reply. |
+| `rounds`   | Number of agent turns taken.  |
+| `duration` | Run time in milliseconds.     |
 
 Errors:
 
-| Status | When |
-|---|---|
-| `400` | `prompt` is missing or empty, `model` or `sessionId` is not a string, or `model` is not in `ALLOWED_MODELS`. |
-| `404` | `sessionId` does not match a known session. |
-| `500` | The agent run failed. The body has `error` and `details`. |
+| Status | When                                                                                                         |
+| ------ | ------------------------------------------------------------------------------------------------------------ |
+| `400`  | `prompt` is missing or empty, `model` or `sessionId` is not a string, or `model` is not in `ALLOWED_MODELS`. |
+| `404`  | `sessionId` does not match a known session.                                                                  |
+| `500`  | The agent run failed. The body has `error` and `details`.                                                    |
 
 ### Sessions
 
@@ -181,12 +200,12 @@ Notes:
 - `data/` is git-ignored, since it holds saved conversations.
 - To resume a session after a restart, Claude Code must still have its own session files, which it keeps per working directory. Start the server from the same folder as before. Deleting a session removes only our JSON file, not Claude Code's.
 
-| Endpoint | Description |
-|---|---|
-| `POST /sessions` | Create a session. Optional body: `{ "model": "claude-sonnet-5" }`. Returns `201` with the session. |
-| `GET /sessions` | List sessions: `{ "sessions": [...] }`. |
-| `GET /sessions/:id` | Session metadata, or `404`. |
-| `DELETE /sessions/:id` | Forget the session. Returns `204`, or `404`. |
+| Endpoint               | Description                                                                                        |
+| ---------------------- | -------------------------------------------------------------------------------------------------- |
+| `POST /sessions`       | Create a session. Optional body: `{ "model": "claude-sonnet-5" }`. Returns `201` with the session. |
+| `GET /sessions`        | List sessions: `{ "sessions": [...] }`.                                                            |
+| `GET /sessions/:id`    | Session metadata, or `404`.                                                                        |
+| `DELETE /sessions/:id` | Forget the session. Returns `204`, or `404`.                                                       |
 
 ```bash
 SESSION=$(curl -s -X POST http://localhost:4005/sessions | jq -r .id)
@@ -206,8 +225,16 @@ curl -X POST http://localhost:4005/query -H "Content-Type: application/json" \
   "updatedAt": "2026-10-20T06:45:02.000Z",
   "queryCount": 2,
   "queries": [
-    { "prompt": "My name is Ana.", "answer": "Nice to meet you, Ana!", "createdAt": "2026-10-20T06:44:40.000Z" },
-    { "prompt": "What is my name?", "answer": "Your name is Ana.", "createdAt": "2026-10-20T06:45:02.000Z" }
+    {
+      "prompt": "My name is Ana.",
+      "answer": "Nice to meet you, Ana!",
+      "createdAt": "2026-10-20T06:44:40.000Z"
+    },
+    {
+      "prompt": "What is my name?",
+      "answer": "Your name is Ana.",
+      "createdAt": "2026-10-20T06:45:02.000Z"
+    }
   ]
 }
 ```
