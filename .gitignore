@@ -1,0 +1,21 @@
+# Safety net for files at the repo root — agent-claude-nodejs/ and agent-explorer-ui/
+# each have their own, more specific .gitignore.
+node_modules/
+.env
+.env.*
+!.env.example
+
+*.log
+npm-debug.log*
+
+.DS_Store
+
+# Local agent/tool config
+.claude/*
+!.claude/agents/
+.agents/
+
+# Generated reports (e.g. security-auditor output)
+docs/*
+# ...but keep the screenshots used by the README
+!docs/info/
