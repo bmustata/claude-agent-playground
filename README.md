@@ -254,3 +254,12 @@ UI (`agent-explorer-ui`):
 npm run lint        # oxlint
 npm run build       # production build
 ```
+
+## Get in Touch
+
+Have questions, suggestions, or want to collaborate? Feel free to reach out!
+
+**Mustata Bogdan**
+
+- 📧 bmustata [at] yahoo.com
+- 💼 [LinkedIn](https://www.linkedin.com/in/bogdanmustata/)

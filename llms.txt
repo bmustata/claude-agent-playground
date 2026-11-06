@@ -1,0 +1,67 @@
+# Claude Agent Playground
+
+> A small sandbox for learning and experimenting with agents built on the Claude Agent SDK. A Node.js (TypeScript) backend runs a Claude agent behind a REST API, and a React UI sends prompts to it. It is also used for hands-on practice for the Claude certifications (CCAO-F, CCAR-F, CCAR-P, CCDV-F). Expect rough edges: this is an experiment, not production code.
+
+Notes for agents working in this repo:
+
+- Two independent npm projects, no root package.json: `agent-claude-nodejs/` (API, port 4005) and `agent-explorer-ui/` (UI, port 4000). Run `npm install` in each.
+- The backend needs Node.js 22.6 or newer. It runs TypeScript natively, so there is no build step.
+- Auth: either `ANTHROPIC_API_KEY` in `agent-claude-nodejs/.env`, or a Claude Code login (`claude`, then `/login`). Copy `.env.example` to `.env`. Never commit `.env`.
+- `POST /query` currently runs only the session agent and the images agent. The other agent files (structured, sub-agents, tools) are not wired to a route yet, so call their functions directly to try them.
+- The API has no authentication and is meant for local use only.
+- Saved sessions go to `data/session/*.json` and uploaded images to `data/assets`. Both are git-ignored.
+
+## Docs
+
+- [README](README.md): setup, architecture diagrams, UI usage and the full API reference with curl examples.
+- [Security report](docs/security-report-2026-11-06.md): latest audit by the security-auditor agent (local only, `docs/` is git-ignored except `docs/info/`).
+
+## Backend (agent-claude-nodejs)
+
+- [src/app.ts](agent-claude-nodejs/src/app.ts): Express app and the list of routes.
+- [src/server.ts](agent-claude-nodejs/src/server.ts): startup, config logging.
+- [src/handlers/query.ts](agent-claude-nodejs/src/handlers/query.ts): `POST /query`, input validation and which agent runs.
+- [src/sessions.ts](agent-claude-nodejs/src/sessions.ts): session store (memory plus JSON files).
+- [src/assets.ts](agent-claude-nodejs/src/assets.ts): image uploads (jpeg, png, gif, webp, 10 MB max).
+- [.env.example](agent-claude-nodejs/.env.example): all settings (`PORT`, `ANTHROPIC_API_KEY`, `ALLOWED_MODELS`, `SESSIONS_DIR`, `ASSETS_DIR`).
+
+## Agent types (agent-claude-nodejs/src/agent)
+
+- [mini-agent.ts](agent-claude-nodejs/src/agent/mini-agent.ts): simplest agent, one prompt and one answer, no context.
+- [mini-agent-session.ts](agent-claude-nodejs/src/agent/mini-agent-session.ts): same, but inside a session so it remembers earlier questions.
+- [mini-agent-structured.ts](agent-claude-nodejs/src/agent/mini-agent-structured.ts): replies with JSON that matches a zod schema.
+- [mini-agent-subagents.ts](agent-claude-nodejs/src/agent/mini-agent-subagents.ts): delegates to sub-agents through the Task tool, including a `data-analyst` for CSV files.
+- [mini-agent-ses-images.ts](agent-claude-nodejs/src/agent/mini-agent-ses-images.ts): session agent that also accepts uploaded images.
+- [agent.ts](agent-claude-nodejs/src/agent/agent.ts): uses only our own tools and reports model, tools used and token usage.
+- [tools/](agent-claude-nodejs/src/agent/tools): custom tools, for example `currentTime`.
+
+## API quick reference (http://localhost:4005)
+
+- `GET /health`: liveness check.
+- `POST /query`: body `{ "prompt": string, "model"?: string, "sessionId"?: string, "assets"?: string[] }`, returns `{ answer, rounds, duration }`.
+- `POST /sessions`, `GET /sessions`, `GET /sessions/:id`, `DELETE /sessions/:id`: manage sessions.
+- `POST /assets` (raw image bytes with an `image/*` Content-Type), `GET /assets`, `GET /assets/:id`, `DELETE /assets/:id`: manage images.
+
+## UI (agent-explorer-ui)
+
+- [src/App.tsx](agent-explorer-ui/src/App.tsx): main screen.
+- [src/components/](agent-explorer-ui/src/components): prompt panel, chat thread, session list, model select, prompt library, image picker.
+- [agents.yml](agent-explorer-ui/agents.yml): backend URL and default model.
+
+## Commands
+
+- Backend, in `agent-claude-nodejs`: `npm run dev` (watch mode), `npm start`, `npm test` (vitest), `npm run typecheck`.
+- UI, in `agent-explorer-ui`: `npm run dev`, `npm run lint` (oxlint), `npm run build`.
+
+## Optional
+
+- [security-auditor agent](.claude/agents/security-auditor.md): Claude Code subagent that audits the repo and writes a report to `docs/`.
+- [Sample data](agent-claude-nodejs/data/movies/mandalorian-universe.csv): CSV used by the data-analyst sub-agent.
+
+## Get in Touch
+
+Have questions, suggestions, or want to collaborate? Feel free to reach out!
+
+- Mustata Bogdan
+- Email: bmustata [at] yahoo.com
+- [LinkedIn](https://www.linkedin.com/in/bogdanmustata/)
