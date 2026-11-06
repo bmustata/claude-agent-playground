@@ -1,0 +1,19 @@
+id,title,type,year,budget_usd_millions,saga_era,connection_to_mandalorian,rating_out_of_10,quick_review
+1,Star Wars: A New Hope,movie,1977,11.0,Original Trilogy,Introduces Boba Fett's world; Empire-era setting follows,9.0,The original that started it all; still the heart of the saga
+2,The Empire Strikes Back,movie,1980,33.0,Original Trilogy,First appearance of Boba Fett,9.5,Darker and bolder; arguably the best of the saga
+3,Return of the Jedi,movie,1983,32.5,Original Trilogy,Fall of the Empire sets up the show's era,7.5,Fun and charming finale; the Ewoks divide fans
+4,The Phantom Menace,movie,1999,115.0,Prequel Trilogy,Origins of the Republic and Naboo,6.0,Great duel and podrace but a clunky political plot
+5,Attack of the Clones,movie,2002,115.0,Prequel Trilogy,Jango Fett and Mandalorian lineage; Kamino clones,6.0,Strong Jango Fett mystery; stiff romance
+6,Revenge of the Sith,movie,2005,113.0,Prequel Trilogy,Order 66 and the rise of the Empire,7.5,Dark and tragic; the strongest prequel
+7,Star Wars: The Clone Wars,movie,2008,8.5,Clone Wars,Launches the series that develops Mandalore and Ahsoka,5.5,Rough animation but it set up Ahsoka and Mandalore
+8,The Force Awakens,movie,2015,447.0,Sequel Trilogy,Sequel era that follows the show,7.5,Nostalgic and energetic; leans heavily on A New Hope
+9,Rogue One,movie,2016,200.0,Standalone,Same Imperial era as the show,8.0,Gritty war film with a superb final act
+10,The Last Jedi,movie,2017,317.0,Sequel Trilogy,Sequel era that follows the show,7.0,Bold and divisive; gorgeous visuals
+11,Solo: A Star Wars Story,movie,2018,300.0,Standalone,Underworld and Crimson Dawn setting,6.5,Entertaining heist western; low stakes
+12,The Rise of Skywalker,movie,2019,416.0,Sequel Trilogy,Sequel era that follows the show,5.5,Fast and fan-servicey; rushed plot
+13,The Mandalorian Season 1,tv_show,2019,100.0,New Republic,Main series,9.0,Charming western-style start; Grogu steals the show
+14,The Mandalorian Season 2,tv_show,2020,120.0,New Republic,Main series; Boba Fett and Ahsoka appear,8.5,Best season; the Boba Fett and Ahsoka cameos land
+15,The Book of Boba Fett,tv_show,2021,100.0,New Republic,Spin-off sharing the same cast and setting,6.5,Strong first episodes; turns into a Mandalorian guest spot
+16,The Mandalorian Season 3,tv_show,2023,150.0,New Republic,Main series; return to Mandalore,6.0,Beautiful in places but a scattered story
+17,Ahsoka,tv_show,2023,150.0,New Republic,Spin-off continuing the Mandalorian storyline,7.5,Faithful to Rebels and the Clone Wars; slow-paced
+18,The Mandalorian and Grogu,movie,2026,165.0,New Republic,Jon Favreau film (released May 22 2026) continuing Din Djarin and Grogu after the series,6.0,Mixed critics (about 55-62% on Rotten Tomatoes) but a record 88% audience score; weak box office after a $81M opening

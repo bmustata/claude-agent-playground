@@ -1,0 +1,6 @@
+agents:
+  - id: agent-claude-nodejs
+    name: Agent Claude/SDK
+    description: Agent backed by the Claude Agent SDK.
+    baseUrl: http://localhost:4005
+    defaultModel: "claude-sonnet-5"

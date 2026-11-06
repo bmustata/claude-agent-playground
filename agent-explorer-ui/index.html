@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script>
+      // Green favicon on localhost, violet everywhere else — an at-a-glance cue for which
+      // environment a tab is pointed at. Swapped here (synchronously, before paint)
+      // rather than in main.tsx, so there's no flash of the wrong-colored icon.
+      if (["localhost", "127.0.0.1", "::1"].includes(location.hostname)) {
+        document.querySelector('link[rel="icon"]').href = "/favicon-local.svg"
+      }
+    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Agent Playground</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
