@@ -58,8 +58,8 @@ export async function queryHandler(req: Request, res: Response) {
     const result = assets?.length
       ? await runMiniAgentSesImages(prompt, model ?? session?.model, session?.id, assets)
       : session
-        ? await runMiniAgentSession(prompt, model ?? session.model, session.id)
-        : await runMiniAgentSession(prompt, model);
+        ? await runMiniAgentSesImages(prompt, model ?? session.model, session.id)
+        : await runMiniAgent(prompt, model);
     res.json(result);
   } catch (error) {
     logger.error({ err: error }, "agent execution failed");
