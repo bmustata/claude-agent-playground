@@ -15,8 +15,8 @@
     "health": "curl -fsS \"http://localhost:${PORT:-4005}/health\""
   },
   "dependencies": {
-    "@anthropic-ai/claude-agent-sdk": "0.3.326",
-    "@anthropic-ai/sdk": "1.9.0",
+    "@anthropic-ai/claude-agent-sdk": "0.3.327",
+    "@anthropic-ai/sdk": "1.10.0",
     "@modelcontextprotocol/sdk": "1.32.2",
     "dotenv": "18.0.10",
     "express": "5.3.0",
@@ -30,6 +30,10 @@
     "@types/supertest": "7.2.1",
     "supertest": "7.3.2",
     "typescript": "7.0.2",
-    "vitest": "5.1.0"
+    "vitest": "5.1.1"
+  },
+  "overrides": {
+    "hono": "4.13.19",
+    "@hono/node-server": "2.1.9"
   }
 }
